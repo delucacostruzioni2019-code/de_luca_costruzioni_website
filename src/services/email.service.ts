@@ -29,7 +29,6 @@ export class EmailService {
   private http = inject(HttpClient);
   private supabase = inject(Supabase);
 
-  private readonly RESEND_API_KEY = environment.resendApiKey;
   private readonly FROM_EMAIL = 'noreply@delucacostruzioni.it';
   //private readonly ADMIN_EMAIL = 'delucacostruzioni2019@gmail.com';
   //todo remove after testing

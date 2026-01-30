@@ -8,7 +8,7 @@ const envConfigFile = `export const environment = {
   production: true,
   supabaseUrl: '${process.env.SUPABASE_URL || ''}',
   supabaseAnonKey: '${process.env.SUPABASE_ANON_KEY || ''}',
-  supabaseServiceRoleKey: ''.
+  supabaseServiceRoleKey: '',
   googlePlaces: {
         apiKey: '', // Configurare con la API key di produzione
         placeId: '', // Configurare con il Place ID dell'attività
