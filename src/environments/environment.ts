@@ -3,7 +3,7 @@ export const environment = {
       supabaseUrl: '',
     supabaseAnonKey: '',
     supabaseServiceRoleKey: '',
-    resendApiKey: 're_9YLmw6GD_DvAP6CfBQaJTjsZddjTyStst', // Configurare con la Resend API key di produzione
+    resendApiKey: '', // Rimossa per sicurezza - ora gestita server-side
     
     // Google Places API Configuration
     googlePlaces: {

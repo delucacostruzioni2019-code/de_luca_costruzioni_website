@@ -1,7 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, from } from 'rxjs';
 import { environment } from '../environments/environment';
+import { Supabase } from './supabase';
 
 interface ContactFormData {
   name: string;
@@ -27,7 +27,8 @@ interface EmailRequest {
 })
 export class EmailService {
   private http = inject(HttpClient);
-  
+  private supabase = inject(Supabase);
+
   private readonly RESEND_API_KEY = environment.resendApiKey;
   private readonly FROM_EMAIL = 'noreply@delucacostruzioni.it';
   //private readonly ADMIN_EMAIL = 'delucacostruzioni2019@gmail.com';
@@ -37,7 +38,7 @@ export class EmailService {
   /**
    * Invia email di conferma all'utente e notifica all'admin
    */
-  async sendContactNotifications(formData: ContactFormData): Promise<{userSent: boolean, adminSent: boolean}> {
+  async sendContactNotifications(formData: ContactFormData): Promise<{ userSent: boolean, adminSent: boolean }> {
     try {
       const [userResult, adminResult] = await Promise.allSettled([
         this.sendUserConfirmationEmail(formData),
@@ -84,17 +85,10 @@ export class EmailService {
     });
   }
 
-  /**
-   * Metodo generico per inviare email tramite Resend
+   /**
+   * Metodo generico per inviare email tramite Supabase Edge Function
    */
   private async sendEmail(emailData: EmailRequest): Promise<any> {
-    const url = 'https://api.resend.com/emails';
-    
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.RESEND_API_KEY}`,
-      'Content-Type': 'application/json'
-    });
-
     const payload = {
       from: emailData.from || this.FROM_EMAIL,
       to: emailData.to,
@@ -102,7 +96,22 @@ export class EmailService {
       html: emailData.html
     };
 
-    return this.http.post(url, payload, { headers }).toPromise();
+    try {
+      const { data, error } = await this.supabase.getClient().functions.invoke('send-email', {
+        body: payload
+      });
+
+      if (error) {
+        console.error('❌ Errore nell\'invio tramite edge function:', error);
+        throw error;
+      }
+
+      console.log('✅ Email inviata tramite edge function:', data);
+      return data;
+    } catch (error) {
+      console.error('❌ Errore nell\'invio tramite edge function:', error);
+      throw error;
+    }
   }
 
   /**
@@ -111,7 +120,7 @@ export class EmailService {
   private generateUserConfirmationTemplate(formData: ContactFormData): string {
     const formTypeLabels = {
       'contact': 'Richiesta di Contatto',
-      'supplier': 'Richiesta Fornitore', 
+      'supplier': 'Richiesta Fornitore',
       'estimate': 'Richiesta Preventivo Gratuito'
     };
 
