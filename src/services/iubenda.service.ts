@@ -187,11 +187,22 @@ export class IubendaService {
    */
   showPreferences(): void {
     if (!isPlatformBrowser(this.platformId) || !window._iub) {
+      console.warn('⚠️ Iubenda non disponibile o non in un browser');
       return;
     }
 
-    if (window._iub.csReady) {
+    if (typeof window._iub.csReady === 'function') {
       window._iub.csReady();
+    } else {
+      console.warn('⚠️ Iubenda non completamente caricato. Tentando di ricaricare...');
+      // Tenta di ricaricare dopo un breve delay
+      setTimeout(() => {
+        if (typeof window._iub?.csReady === 'function') {
+          window._iub.csReady();
+        } else {
+          console.error('❌ Iubenda csReady non disponibile dopo il retry');
+        }
+      }, 500);
     }
   }
 
