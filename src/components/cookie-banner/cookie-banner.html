@@ -1,0 +1,54 @@
+<!-- Fallback Cookie Banner (mostrato solo se Iubenda non si carica) -->
+<div *ngIf="showBanner" class="cookie-banner">
+  <div class="cookie-banner__container">
+    <div class="cookie-banner__content">
+      <div class="cookie-banner__icon">
+        🍪
+      </div>
+      <div class="cookie-banner__text">
+        <h3>Utilizziamo i cookie per migliorare la tua esperienza</h3>
+        <p>
+          Questo sito utilizza cookie tecnici e di terze parti per fornire alcuni servizi. 
+          Continuando la navigazione acconsenti al loro uso. 
+          <a href="/privacy-policy" target="_blank" rel="noopener">Leggi la Privacy Policy</a>
+        </p>
+      </div>
+    </div>
+    
+    <div class="cookie-banner__actions">
+      <button 
+        type="button" 
+        class="btn btn--secondary btn--small"
+        (click)="rejectAll()">
+        Rifiuta tutto
+      </button>
+      
+      <button 
+        type="button" 
+        class="btn btn--outline btn--small"
+        (click)="showPreferences()">
+        Personalizza
+      </button>
+      
+      <button 
+        type="button" 
+        class="btn btn--primary btn--small"
+        (click)="acceptAll()">
+        Accetta tutto
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Pulsante per riaprire le preferenze (sempre visibile) -->
+<button 
+  type="button" 
+  class="cookie-preferences-btn"
+  (click)="showPreferences()"
+  title="Gestisci preferenze cookie"
+  aria-label="Gestisci preferenze cookie">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12A2,2 0 0,0 12,10Z"/>
+  </svg>
+  Cookie
+</button>

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FormSuccessMessage } from '../form-success-message/form-success-message';
 import { LeadService } from '../../services/lead';
 import { FreeEstimateLead } from '../../models/lead';
+import { EmailService } from '../../services/email.service';
 
 @Component({
   selector: 'app-form-free-estimate',
@@ -14,10 +15,12 @@ import { FreeEstimateLead } from '../../models/lead';
 export class FormFreeEstimate implements OnInit {
   private fb = inject(FormBuilder);
   private leadService = inject(LeadService);
+  private emailService = inject(EmailService);
 
   estimateForm!: FormGroup;
   isSubmitted = false;
   isSubmitting = false;
+ emailStatus = { userSent: false, adminSent: false };
 
   ngOnInit(): void {
     this.estimateForm = this.fb.group({
@@ -35,7 +38,7 @@ export class FormFreeEstimate implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.estimateForm.valid) {
       console.log('Form Preventivo Inviato:', this.estimateForm.value);
       this.isSubmitting = true;
@@ -47,18 +50,33 @@ export class FormFreeEstimate implements OnInit {
         lead_type: 'free_estimate' as const
       };
 
-      this.leadService.saveContactLead(leadData)
-        .then((data) => {
-          console.log('Richiesta preventivo salvata con successo', data);
-          this.isSubmitted = true;
-          this.isSubmitting = false;
-          this.estimateForm.reset();
-        })
-        .catch((error) => {
-          console.error('Errore nel salvataggio della richiesta preventivo', error);
-          alert('Si è verificato un errore durante l\'invio. Riprova.');
-          this.isSubmitting = false;
-        });
+      try {
+        // 1. Salva nel database
+        const savedLead = await this.leadService.saveContactLead(leadData);
+        console.log('✅ Richiesta preventivo salvata con successo', savedLead);
+
+        // 2. Invia email notifications
+        console.log('📧 Invio email notifications preventivo...');
+        const emailFormData = {
+          ...this.estimateForm.value,
+          form_type: 'estimate' as const
+        };
+
+        const emailResults = await this.emailService.sendContactNotifications(emailFormData);
+        this.emailStatus = emailResults;
+
+        console.log('📧 Email results (preventivo):', emailResults);
+
+        // 3. Mostra success message
+        this.isSubmitted = true;
+        this.isSubmitting = false;
+        this.estimateForm.reset();
+
+      } catch (error) {
+        console.error('❌ Errore nel processo di invio preventivo:', error);
+        alert('Si è verificato un errore durante l\'invio. Riprova.');
+        this.isSubmitting = false;
+      }
     } else {
       this.estimateForm.markAllAsTouched();
       alert('Per favore, compila tutti i campi obbligatori correttamente.');

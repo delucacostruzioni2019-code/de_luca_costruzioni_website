@@ -8,6 +8,7 @@ import { Pagination, Navigation, Thumbs } from 'swiper/modules';
 import { Subscription } from 'rxjs';
 import { ImageData } from '../../models/image-data';
 import { RistrutturazioniService } from '../../services/ristrutturazioni';
+import { SEOService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-portfolio-detail',
@@ -22,6 +23,7 @@ export default class PortfolioDetail implements OnInit, OnDestroy {
   private ristrutturazioniService = inject(RistrutturazioniService);
   private supabase = inject(Supabase);
   private cdr = inject(ChangeDetectorRef);
+  private seoService = inject(SEOService);
   private swiper?: Swiper;
   private fullscreenSwiper?: Swiper;
   private thumbsSwiper?: Swiper;
@@ -155,7 +157,28 @@ export default class PortfolioDetail implements OnInit, OnDestroy {
     // Traccia indice del progetto corrente
     this.currentProjectIndex = this.allProjects.findIndex((p: any) => p.id === id);
 
-    this.project.set(this.allProjects[this.currentProjectIndex] || null);
+    const project = this.allProjects[this.currentProjectIndex] || null;
+    this.project.set(project);
+
+    // Configura SEO dinamico per il progetto specifico
+    if (project) {
+      this.seoService.updateSEO({
+        title: `${project.title} - Portfolio De Luca Costruzioni`,
+        description: `${project.description} - Scopri i dettagli di questo progetto realizzato da De Luca Costruzioni.`,
+        keywords: `${project.title}, portfolio costruzioni, ristrutturazione, De Luca Costruzioni`,
+        ogTitle: `${project.title} - Portfolio`,
+        ogDescription: project.description,
+        ogImage: project.cover_img || '/assets/images/logo_transparent.svg',
+        ogUrl: `https://delucacostruzioni.it/portfolio/${project.id}`,
+        structuredData: this.seoService.createProjectStructuredData({
+          title: project.title,
+          description: project.description,
+          image: project.cover_img,
+          date: project.created_at,
+          tags: project.categories || []
+        })
+      });
+    }
 
     // ensure swipers are re-initialized for the new content
     setTimeout(() => {
