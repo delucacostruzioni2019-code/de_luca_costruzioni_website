@@ -1,9 +1,17 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 #map {
   height: 450px;
   width: 100%;
   z-index: 1; // Assicura che la mappa sia visibile correttamente
 }
 
-.custom-width {
+iframe {
   width: 100%;
+  height: 450px;
+  border: none;
+  display: block;
 }
