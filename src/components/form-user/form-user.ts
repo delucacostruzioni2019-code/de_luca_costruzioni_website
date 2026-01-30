@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FormSuccessMessage } from '../form-success-message/form-success-message';
 import { LeadService } from '../../services/lead';
 import { ContactLead } from '../../models/lead';
+import { EmailService } from '../../services/email.service';
 
 @Component({
   selector: 'app-form-user',
@@ -14,10 +15,12 @@ import { ContactLead } from '../../models/lead';
 export class FormUser implements OnInit {
   private fb = inject(FormBuilder);
   private leadService = inject(LeadService);
+  private emailService = inject(EmailService);
 
   contactForm!: FormGroup;
   isSubmitted = false;
   isSubmitting = false;
+ emailStatus = { userSent: false, adminSent: false };
 
   ngOnInit(): void {
     this.contactForm = this.fb.group({
@@ -32,7 +35,7 @@ export class FormUser implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.contactForm.valid) {
       console.log('Form Inviato:', this.contactForm.value);
       this.isSubmitting = true;
@@ -42,18 +45,45 @@ export class FormUser implements OnInit {
         lead_type: 'contact' as const
       };
 
-      this.leadService.saveContactLead(leadData)
-        .then((data) => {
-          console.log('Lead salvato con successo', data);
-          this.isSubmitted = true;
-          this.isSubmitting = false;
-          this.contactForm.reset();
-        })
-        .catch((error) => {
-          console.error('Errore nel salvataggio del lead', error);
-          alert('Si è verificato un errore durante l\'invio. Riprova.');
-          this.isSubmitting = false;
-        });
+      try {
+        // 1. Salva nel database
+        const savedLead = await this.leadService.saveContactLead(leadData);
+        console.log('✅ Lead salvato con successo', savedLead);
+
+        // 2. Invia email notifications
+        console.log('📧 Invio email notifications...');
+        const emailFormData = {
+          ...this.contactForm.value,
+          form_type: 'contact' as const
+        };
+
+        const emailResults = await this.emailService.sendContactNotifications(emailFormData);
+        this.emailStatus = emailResults;
+
+        console.log('📧 Email results:', emailResults);
+
+        if (emailResults.userSent) {
+          console.log('✅ Email di conferma inviata all\'utente');
+        } else {
+          console.warn('⚠️ Errore nell\'invio email utente');
+        }
+
+        if (emailResults.adminSent) {
+          console.log('✅ Email di notifica inviata all\'admin');
+        } else {
+          console.warn('⚠️ Errore nell\'invio email admin');
+        }
+
+        // 3. Mostra success message
+        this.isSubmitted = true;
+        this.isSubmitting = false;
+        this.contactForm.reset();
+
+      } catch (error) {
+        console.error('❌ Errore nel processo di invio:', error);
+        alert('Si è verificato un errore durante l\'invio. Riprova.');
+        this.isSubmitting = false;
+      }
 
     } else {
       this.contactForm.markAllAsTouched();

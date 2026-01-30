@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewEncapsulation, inject, OnDestroy } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 import Swiper from 'swiper';
 import { Autoplay, Pagination } from 'swiper/modules';
+import { GooglePlacesService, GooglePlaceDetails } from '../../services/google-places.service';
+import { Subscription } from 'rxjs';
 
 interface Review {
   id: number;
@@ -16,73 +19,27 @@ interface Review {
 @Component({
   selector: 'app-google-reviews',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './google-reviews.html',
   styleUrls: ['./google-reviews.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class GoogleReviews implements OnInit {
-  totalReviews = 38;
-  averageRating = 5.0;
+export class GoogleReviews implements OnInit, OnDestroy {
+  private googlePlacesService = inject(GooglePlacesService);
+  private subscription?: Subscription;
+  
+  totalReviews = 0;
+  averageRating = 0;
+  isLoading = false;
+  error: string | null = null;
 
-  reviews: Review[] = [
-    {
-      id: 1,
-      author: 'Daniele Pingue',
-      date: '6 Agosto 2025',
-      rating: 5,
-      text: 'Professionalità e disponibilità sono gli aggettivi per definire al meglio questa esperienza. Eccellenti in tutto, soprattutto nel rispetto dei tempi previsti che non è mai semplice in fase ...',
-      initials: 'D'
-    },
-    {
-      id: 2,
-      author: 'Marco Rossi',
-      date: '15 Luglio 2025',
-      rating: 5,
-      text: 'Servizio impeccabile, personale competente e sempre disponibile. Hanno superato le mie aspettative in ogni aspetto del progetto.',
-      initials: 'M'
-    },
-    {
-      id: 3,
-      author: 'Laura Bianchi',
-      date: '3 Luglio 2025',
-      rating: 5,
-      text: 'Esperienza fantastica! Consiglio vivamente questa azienda a chiunque cerchi professionalità e qualità nel servizio.',
-      initials: 'L'
-    },
-    {
-      id: 4,
-      author: 'Giuseppe Verdi',
-      date: '20 Giugno 2025',
-      rating: 5,
-      text: 'Collaborazione eccellente dall\'inizio alla fine. Sono rimasto molto soddisfatto del risultato finale e della comunicazione costante.',
-      initials: 'G'
-    },
-    {
-      id: 5,
-      author: 'Giuseppe Verdi',
-      date: '20 Giugno 2025',
-      rating: 5,
-      text: 'Collaborazione eccellente dall\'inizio alla fine. Sono rimasto molto soddisfatto del risultato finale e della comunicazione costante.',
-      initials: 'G'
-    },
-    {
-      id: 6,
-      author: 'Giuseppe Verdi',
-      date: '20 Giugno 2025',
-      rating: 5,
-      text: 'Collaborazione eccellente dall\'inizio alla fine. Sono rimasto molto soddisfatto del risultato finale e della comunicazione costante.',
-      initials: 'G'
-    }
-  ];
+  reviews: Review[] = [];
 
   private swiper?: Swiper;
   expandedReviews: Set<number> = new Set();
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.initSwiper();
-    }, 100);
+    this.loadReviews();
   }
 
   initSwiper(): void {
@@ -142,9 +99,114 @@ export class GoogleReviews implements OnInit {
     return text.length > 150;
   }
 
+  /**
+   * Carica le recensioni da Google Places API con cache locale
+   */
+  loadReviews(): void {
+    this.isLoading = true;
+    this.error = null;
+
+    this.subscription = this.googlePlacesService.getPlaceReviews().subscribe({
+      next: (placeData: GooglePlaceDetails) => {
+        this.totalReviews = placeData.user_ratings_total;
+        this.averageRating = placeData.rating;
+        
+        // Converti le recensioni Google nel formato del componente
+        this.reviews = placeData.reviews.map((googleReview, index) => 
+          this.googlePlacesService.convertGoogleReviewToLocal(googleReview, index)
+        );
+
+        this.isLoading = false;
+        
+        // Inizializza Swiper dopo il caricamento dei dati
+        setTimeout(() => {
+          this.initSwiper();
+        }, 100);
+
+        // Log informazioni cache
+        const cacheInfo = this.googlePlacesService.getCacheInfo();
+        if (cacheInfo.exists && cacheInfo.timeUntilExpiry) {
+          const hoursLeft = Math.floor(cacheInfo.timeUntilExpiry / (1000 * 60 * 60));
+          console.log(`📊 Recensioni caricate. Cache scade tra ${hoursLeft} ore`);
+        }
+      },
+      error: (error) => {
+        this.error = 'Errore nel caricamento delle recensioni';
+        this.isLoading = false;
+        console.error('❌ Errore caricamento recensioni:', error);
+        
+        // Fallback su dati mock se disponibili
+        this.loadFallbackReviews();
+      }
+    });
+  }
+
+  /**
+   * Carica recensioni di fallback in caso di errore
+   */
+  private loadFallbackReviews(): void {
+    this.totalReviews = 38;
+    this.averageRating = 5.0;
+    this.reviews = [
+      {
+        id: 1,
+        author: 'Daniele Pingue',
+        date: '6 mesi fa',
+        rating: 5,
+        text: 'Professionalità e disponibilità sono gli aggettivi per definire al meglio questa esperienza. Eccellenti in tutto, soprattutto nel rispetto dei tempi previsti che non è mai semplice in fase di ristrutturazione.',
+        initials: 'DP'
+      },
+      {
+        id: 2,
+        author: 'Marco Rossi',
+        date: '3 mesi fa',
+        rating: 5,
+        text: 'Servizio impeccabile, personale competente e sempre disponibile. Hanno superato le mie aspettative in ogni aspetto del progetto.',
+        initials: 'MR'
+      },
+      {
+        id: 3,
+        author: 'Laura Bianchi',
+        date: '2 mesi fa',
+        rating: 5,
+        text: 'Esperienza fantastica! Consiglio vivamente questa azienda a chiunque cerchi professionalità e qualità nel servizio.',
+        initials: 'LB'
+      }
+    ];
+
+    setTimeout(() => {
+      this.initSwiper();
+    }, 100);
+  }
+
+  /**
+   * Forza il refresh delle recensioni
+   */
+  refreshReviews(): void {
+    this.googlePlacesService.clearCache();
+    this.loadReviews();
+  }
+
+  /**
+   * Ottiene informazioni sullo stato della cache
+   */
+  getCacheStatus(): string {
+    const cacheInfo = this.googlePlacesService.getCacheInfo();
+    if (!cacheInfo.exists) {
+      return 'Cache vuota';
+    }
+
+    const hoursLeft = Math.floor((cacheInfo.timeUntilExpiry || 0) / (1000 * 60 * 60));
+    return `Cache scade tra ${hoursLeft} ore`;
+  }
+
   ngOnDestroy(): void {
     if (this.swiper) {
       this.swiper.destroy();
+    }
+    
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 }

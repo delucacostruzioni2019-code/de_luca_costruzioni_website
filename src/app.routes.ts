@@ -10,6 +10,7 @@ export const routes: Routes = [
     { path: 'portfolio/:id', loadComponent: () => import('./pages/portfolio-detail/portfolio-detail').then(m => m.default) },
     { path: 'contact', loadComponent: () => import('./pages/contact/contact').then(m => m.default) },
     { path: 'free_estimate', loadComponent: () => import('./pages/free-estimate/free-estimate').then(m => m.default) },
+    { path: 'privacy-policy', loadComponent: () => import('./components/privacy-policy/privacy-policy').then(m => m.PrivacyPolicy) },
     {
         path: 'admin', loadComponent: () => import('./pages/admin/admin').then(m => m.default), children: [
             { path: 'login', loadComponent: () => import('./pages/admin/login/login').then(m => m.default) },

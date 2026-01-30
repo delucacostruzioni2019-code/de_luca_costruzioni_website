@@ -1,0 +1,152 @@
+<div class="privacy-policy">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="privacy-policy__loading">
+    <div class="spinner"></div>
+    <p>Caricamento privacy policy...</p>
+  </div>
+
+  <!-- Iubenda Privacy Policy Iframe -->
+  <div *ngIf="!isLoading && !showFallback && privacyPolicyUrl" class="privacy-policy__iframe-container">
+    <h1>Privacy Policy</h1>
+    <iframe 
+      [src]="privacyPolicyUrl"
+      title="Privacy Policy"
+      class="privacy-policy__iframe"
+      frameborder="0">
+    </iframe>
+
+    <!-- Cookie Policy -->
+    <div *ngIf="cookiePolicyUrl" class="privacy-policy__cookie-section">
+      <h2>Cookie Policy</h2>
+      <iframe 
+        [src]="cookiePolicyUrl"
+        title="Cookie Policy"
+        class="privacy-policy__iframe"
+        frameborder="0">
+      </iframe>
+    </div>
+
+    <!-- Cookie Preferences Button -->
+    <div class="privacy-policy__actions">
+      <button 
+        type="button" 
+        class="btn btn--primary"
+        (click)="openCookiePreferences()">
+        Gestisci Preferenze Cookie
+      </button>
+    </div>
+  </div>
+
+  <!-- Fallback Content (quando Iubenda non è configurato) -->
+  <div *ngIf="!isLoading && showFallback" class="privacy-policy__fallback">
+    <div class="container">
+      <h1>Privacy Policy - De Luca Costruzioni</h1>
+      
+      <div class="privacy-policy__content">
+        <section class="privacy-section">
+          <h2>1. Informazioni Generali</h2>
+          <p>
+            Questa Privacy Policy descrive come De Luca Costruzioni raccoglie, utilizza e protegge 
+            le informazioni personali degli utenti che visitano il nostro sito web.
+          </p>
+          
+          <div class="company-info">
+            <h3>Titolare del Trattamento</h3>
+            <p>
+              <strong>De Luca Costruzioni</strong><br>
+              Via Napoli 141, Casalnuovo (NA)<br>
+              Email: delucacostruzioni2019@gmail.com<br>
+              Tel: +39 338 924 1314
+            </p>
+          </div>
+        </section>
+
+        <section class="privacy-section">
+          <h2>2. Dati Raccolti</h2>
+          <p>Raccogliamo le seguenti tipologie di dati:</p>
+          <ul>
+            <li><strong>Dati di contatto:</strong> nome, cognome, email, telefono, indirizzo</li>
+            <li><strong>Dati di navigazione:</strong> indirizzo IP, tipo di browser, pagine visitate</li>
+            <li><strong>Dati tecnici:</strong> cookie tecnici per il funzionamento del sito</li>
+          </ul>
+        </section>
+
+        <section class="privacy-section">
+          <h2>3. Finalità del Trattamento</h2>
+          <p>I dati personali sono trattati per:</p>
+          <ul>
+            <li>Rispondere alle richieste di contatto e preventivi</li>
+            <li>Fornire informazioni sui nostri servizi</li>
+            <li>Migliorare l'esperienza di navigazione del sito</li>
+            <li>Rispettare obblighi legali e contrattuali</li>
+          </ul>
+        </section>
+
+        <section class="privacy-section">
+          <h2>4. Base Giuridica</h2>
+          <p>
+            Il trattamento è basato sul consenso dell'interessato per le attività di marketing 
+            e sull'interesse legittimo per le attività di gestione delle richieste di contatto.
+          </p>
+        </section>
+
+        <section class="privacy-section">
+          <h2>5. Conservazione dei Dati</h2>
+          <p>
+            I dati personali sono conservati per il tempo necessario alle finalità per cui sono stati raccolti 
+            e in conformità alle normative vigenti.
+          </p>
+        </section>
+
+        <section class="privacy-section">
+          <h2>6. Diritti dell'Interessato</h2>
+          <p>L'interessato ha diritto a:</p>
+          <ul>
+            <li>Accedere ai propri dati personali</li>
+            <li>Rettificare dati inesatti</li>
+            <li>Cancellare i dati (diritto all'oblio)</li>
+            <li>Limitare il trattamento</li>
+            <li>Portabilità dei dati</li>
+            <li>Opporsi al trattamento</li>
+            <li>Revocare il consenso</li>
+          </ul>
+        </section>
+
+        <section class="privacy-section">
+          <h2>7. Cookie</h2>
+          <p>
+            Il sito utilizza cookie tecnici necessari per il funzionamento e cookie analitici 
+            per migliorare l'esperienza utente. È possibile gestire le preferenze dei cookie 
+            attraverso il banner presente sul sito.
+          </p>
+          
+          <div class="cookie-actions">
+            <button 
+              type="button" 
+              class="btn btn--outline"
+              (click)="openCookiePreferences()">
+              Gestisci Cookie
+            </button>
+          </div>
+        </section>
+
+        <section class="privacy-section">
+          <h2>8. Contatti</h2>
+          <p>
+            Per esercitare i propri diritti o per qualsiasi domanda relativa al trattamento 
+            dei dati personali, è possibile contattarci all'indirizzo: 
+            <strong>delucacostruzioni2019@gmail.com</strong>
+          </p>
+        </section>
+
+        <div class="privacy-policy__footer">
+          <p><em>Ultimo aggiornamento: {{ getCurrentDate() }}</em></p>
+          <p class="disclaimer">
+            <strong>Nota:</strong> Questa è una privacy policy di base. 
+            Si consiglia di consultare un legale per una versione completa e conforme al GDPR.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

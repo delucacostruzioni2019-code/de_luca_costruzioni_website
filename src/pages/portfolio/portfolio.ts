@@ -1,9 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FollowOn } from "../../components/follow-on/follow-on";
 import { HeroBanner } from "../../components/hero-banner/hero-banner";
 import { Paginator } from "../../components/paginator/paginator";
 import { RistrutturazioniService } from '../../services/ristrutturazioni';
+import { SEOService } from '../../services/seo.service';
 
 interface Project {
   id: number;
@@ -20,10 +21,11 @@ interface Project {
   styleUrl: './portfolio.scss',
   imports: [HeroBanner, FollowOn, Paginator],
 })
-export default class Portfolio {
+export default class Portfolio implements OnInit {
 
   route = inject(Router);
   ristrutturazioniService = inject(RistrutturazioniService);
+  private seoService = inject(SEOService);
   ristrutturazioni = this.ristrutturazioniService.ristrutturazioni;
 
   categories = this.ristrutturazioniService.categories;
@@ -45,6 +47,9 @@ export default class Portfolio {
 
 
   async ngOnInit(): Promise<void> {
+    // Configura SEO per pagina portfolio
+    this.seoService.updatePageSEO('portfolio');
+    
     this.ristrutturazioniService.getCategories();
     this.ristrutturazioniService.getRistrutturazioni();
   }

@@ -65,8 +65,8 @@ html {
 
 body {
   font-family: 'Outfit', sans-serif;
-  margin: 0;
-  padding: 0;
+  margin: 0 !important; // Forza il reset per evitare interferenze di Iubenda
+  padding: 0 !important;
   min-height: 100vh;
   font-weight: 400;
   box-sizing: border-box; // Assicura che padding e bordi siano inclusi nelle dimensioni degli elementi
@@ -99,4 +99,26 @@ h6 {
 
   /* Centra il contenitore orizzontalmente */
   margin: 0 auto;
+}
+
+/* Fix per interferenze Iubenda */
+html, body {
+  position: relative !important;
+  top: 0 !important;
+  transform: none !important;
+}
+
+/* Evita che Iubenda sposti il body */
+body.iub-body-margin {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Reset eventuali stili Iubenda sul body */
+body[style*="margin"],
+body[style*="padding"],
+body[style*="transform"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
 }
