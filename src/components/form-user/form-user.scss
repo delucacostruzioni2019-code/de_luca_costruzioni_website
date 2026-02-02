@@ -70,6 +70,7 @@ $primary-color: #007bff;
 input[type='text'],
 input[type='tel'],
 input[type='email'],
+select,
 textarea,
 .file-placeholder {
   padding: 12px;
@@ -84,6 +85,34 @@ textarea,
   &:focus {
     border-color: $primary-color;
     outline: none;
+  }
+
+  /* Placeholder styling */
+  &::placeholder {
+    color: #999;
+    opacity: 1;
+  }
+}
+
+/* Styling specifico per select service_type */
+.service-select {
+  color: #999;
+  
+  &:focus {
+    color: $text-color-dark;
+  }
+  
+  option {
+    color: $text-color-dark;
+    
+    &:disabled {
+      color: #999;
+    }
+  }
+  
+  /* Quando un valore è selezionato, cambia colore */
+  &.has-value {
+    color: $text-color-dark !important;
   }
 }
 

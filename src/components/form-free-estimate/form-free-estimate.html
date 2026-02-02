@@ -20,7 +20,15 @@
           <input type="text" placeholder="Indirizzo*" formControlName="address" required>
           <input type="text" placeholder="Mq" formControlName="square_meters">
           <input type="text" placeholder="Piano edificio" formControlName="floor">
-          <input type="text" placeholder="Tipologia di servizio" formControlName="service_type">
+          <select formControlName="service_type" class="service-select"
+                  [class.has-value]="estimateForm.get('service_type')?.value">
+            <option value="" disabled selected>Seleziona tipologia di servizio</option>
+            <option value="ristrutturazione-casa">Ristrutturazione Casa</option>
+            <option value="ristrutturazione-commerciale">Ristrutturazione Attività Commerciale</option>
+            <option value="impermeabilizzazione-tetto">Impermeabilizzazione Tetto</option>
+            <option value="ristrutturazione-facciata">Ristrutturazione Facciata Palazzo</option>
+            <option value="altro">Altro</option>
+          </select>
           <input type="text" placeholder="Budget" formControlName="budget">
           <input type="email" placeholder="E-mail*" formControlName="email" required>
 

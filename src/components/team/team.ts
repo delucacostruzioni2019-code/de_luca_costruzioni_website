@@ -40,7 +40,7 @@ export class Team {
       image: 'assets/images/team/grazia.png',
       bio: 'Volto principale dell\'azienda sui social e responsabile della comunicazione'
     },
-    {
+    /*{
       id: 4,
       name: 'Nunzia Beneduce',
       role: 'Amministratrice e contabile',
@@ -53,6 +53,6 @@ export class Team {
       role: 'Geometra',
       image: 'assets/images/team/team-1.jpg',
       bio: 'Geometra con esperienza e addetto a sopralluoghi e controllo qualità'
-    }
+    }*/
   ];
 }

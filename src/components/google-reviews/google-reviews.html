@@ -39,11 +39,6 @@
             <button (click)="refreshReviews()" class="retry-btn">Riprova</button>
         </div>
 
-        <!-- Debug Info (solo in development) -->
-        <div class="cache-debug" style="font-size: 12px; color: #666; margin: 10px 0;">
-            <span>{{ getCacheStatus() }}</span>
-            <button (click)="refreshReviews()" style="margin-left: 10px; font-size: 11px;">🔄 Refresh</button>
-        </div>
 
         <!-- Slider Recensioni -->
         <div class="swiper reviews-swiper" *ngIf="!isLoading && !error">
@@ -89,6 +84,13 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Controlli di navigazione -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            
+            <!-- Paginazione -->
+            <div class="swiper-pagination"></div>
         </div>
     </div>
 </section>

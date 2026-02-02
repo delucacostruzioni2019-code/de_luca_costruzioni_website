@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewEncapsulation, inject, OnDestroy } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import Swiper from 'swiper';
-import { Autoplay, Pagination } from 'swiper/modules';
+import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import { GooglePlacesService, GooglePlaceDetails } from '../../services/google-places.service';
 import { Subscription } from 'rxjs';
 
@@ -44,18 +44,31 @@ export class GoogleReviews implements OnInit, OnDestroy {
 
   initSwiper(): void {
     this.swiper = new Swiper('.reviews-swiper', {
-      modules: [Autoplay],
+      modules: [Autoplay, Pagination, Navigation],
       slidesPerView: 1.2,
-      spaceBetween: 30,
+      spaceBetween: 20,
       loop: false,
       autoplay: {
-        delay: 6000,
+        delay: 5000,
         disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
       },
       breakpoints: {
+        480: {
+          slidesPerView: 1,
+          spaceBetween: 16,
+        },
         768: {
           slidesPerView: 2,
-          spaceBetween: 30,
+          spaceBetween: 24,
         },
         1024: {
           slidesPerView: 3,
