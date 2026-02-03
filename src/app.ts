@@ -4,14 +4,12 @@ import { RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Footer } from "./components/footer/footer";
 import Navbar from './components/navbar/navbar';
-import { CookieBanner } from './components/cookie-banner/cookie-banner';
 import { SEOService } from './services/seo.service';
 import { PerformanceService } from './services/performance.service';
-import { IubendaService } from './services/iubenda.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Footer, Navbar, CookieBanner],
+  imports: [RouterOutlet, Footer, Navbar],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -20,7 +18,6 @@ export class App implements OnInit {
   private router = inject(Router);
   private seoService = inject(SEOService);
   private performanceService = inject(PerformanceService);
-  private iubendaService = inject(IubendaService);
 
   // 🟢 Il Signal che gestisce lo stato di visualizzazione
   public hideComponent = signal<boolean>(false);
@@ -48,8 +45,6 @@ export class App implements OnInit {
     // Imposta lingua italiana di default
     this.seoService.setLanguage('it');
 
-    // Inizializza Iubenda (temporaneamente senza parametri - da configurare quando l'account è pronto)
-    this.iubendaService.initialize();
 
     this.router.events
       .pipe(

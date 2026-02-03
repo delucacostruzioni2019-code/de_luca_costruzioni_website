@@ -1,7 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IubendaService } from '../../services/iubenda.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+declare global {
+  interface Window {
+    _iub: any;
+  }
+}
 
 @Component({
   selector: 'app-privacy-policy',
@@ -10,13 +15,16 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   styleUrl: './privacy-policy.scss',
 })
 export class PrivacyPolicy implements OnInit {
-  private iubendaService = inject(IubendaService);
   private sanitizer = inject(DomSanitizer);
   
   privacyPolicyUrl: SafeResourceUrl = '';
   cookiePolicyUrl: SafeResourceUrl = '';
   isLoading = true;
   showFallback = false;
+
+  // URLs diretti da Iubenda (da sostituire con i tuoi ID reali)
+  private readonly PRIVACY_POLICY_ID = 55772221; // Da sostituire con il tuo ID privacy
+  private readonly COOKIE_POLICY_ID = 55772221;  // Da sostituire con il tuo ID cookie
 
   ngOnInit(): void {
     this.loadPolicyUrls();
@@ -27,21 +35,11 @@ export class PrivacyPolicy implements OnInit {
    */
   private loadPolicyUrls(): void {
     try {
-      const privacyUrl = this.iubendaService.getPrivacyPolicyUrl();
-      const cookieUrl = this.iubendaService.getCookiePolicyUrl();
+      const privacyUrl = `https://www.iubenda.com/privacy-policy/${this.PRIVACY_POLICY_ID}`;
+      const cookieUrl = `https://www.iubenda.com/privacy-policy/${this.COOKIE_POLICY_ID}/cookie-policy`;
 
-      if (privacyUrl) {
-        this.privacyPolicyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(privacyUrl);
-      }
-
-      if (cookieUrl) {
-        this.cookiePolicyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(cookieUrl);
-      }
-
-      // Se non ci sono URL configurati, mostra il fallback
-      if (!privacyUrl && !cookieUrl) {
-        this.showFallback = true;
-      }
+      this.privacyPolicyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(privacyUrl);
+      this.cookiePolicyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(cookieUrl);
 
       this.isLoading = false;
     } catch (error) {
@@ -55,7 +53,18 @@ export class PrivacyPolicy implements OnInit {
    * Gestisce il click per aprire le preferenze cookie
    */
   openCookiePreferences(): void {
-    this.iubendaService.showPreferences();
+    if (window._iub && typeof window._iub.csReady === 'function') {
+      window._iub.csReady();
+    } else {
+      console.warn('⚠️ Iubenda not ready, trying again in 500ms');
+      setTimeout(() => {
+        if (window._iub && typeof window._iub.csReady === 'function') {
+          window._iub.csReady();
+        } else {
+          console.error('❌ Iubenda csReady not available after retry');
+        }
+      }, 500);
+    }
   }
 
   /**
