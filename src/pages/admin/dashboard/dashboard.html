@@ -16,46 +16,6 @@
                     <p class="stat-value">{{ ristrutturazioni().length }}</p>
                 </div>
             </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background-color: #dcfce7;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <p class="stat-label">In Corso</p>
-                    <p class="stat-value">0</p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background-color: #fef3c7;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <p class="stat-label">In Attesa</p>
-                    <p class="stat-value">0</p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background-color: #e0e7ff;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <p class="stat-label">Completate</p>
-                    <p class="stat-value">0</p>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -123,115 +83,7 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- DDT & Gestionale Stats -->
-    <!-- Toggle this bool tho show/hide this section -->
-    @if(false) {
-    <div class="section">
-        <h2 class="section-title">📦 Gestionale Materiali & DDT</h2>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon" style="background-color: #f3e8ff;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <p class="stat-label">Totale DDT</p>
-                    <p class="stat-value">{{ ddtStats().totale }}</p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background-color: #ecfccb;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="#84cc16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M8 2v4"></path>
-                        <path d="M16 2v4"></path>
-                        <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-                        <path d="M3 10h18"></path>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <p class="stat-label">DDT Questo Mese</p>
-                    <p class="stat-value">{{ ddtStats().questoMese }}</p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background-color: #fef3c7;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <p class="stat-label">Spesa Totale</p>
-                    <p class="stat-value">{{ formatCurrency(ddtStats().totaleSpeso) }}</p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background-color: #fee2e2;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <p class="stat-label">Fornitori Attivi</p>
-                    <p class="stat-value">{{ fornitoriStats().totale }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Top Fornitori -->
-        <div class="fornitori-overview">
-            <h3>🏆 Top 5 Fornitori per Spesa</h3>
-            <div class="fornitori-list">
-                @for (fornitore of fornitoriStats().topFornitori; track fornitore.nome) {
-                <div class="fornitore-item">
-                    <div class="fornitore-info">
-                        <span class="fornitore-nome">{{ fornitore.nome }}</span>
-                        <span class="fornitore-ddt">{{ fornitore.numeroDdt }} DDT</span>
-                    </div>
-                    <div class="fornitore-spesa">{{ formatCurrency(fornitore.totaleSpeso) }}</div>
-                </div>
-                } @empty {
-                <div class="empty-state">Nessun fornitore trovato</div>
-                }
-            </div>
-        </div>
-
-        <!-- Grafici Trend -->
-        @if (!loading()) {
-        <div class="charts-section">
-            <h3>📈 Andamento Spese Mensili</h3>
-            <div class="chart-container">
-                <div class="chart-placeholder">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 3v18h18"></path>
-                        <path d="M18 17l-5-5-3 3-6-6"></path>
-                    </svg>
-                    <p>Grafico in sviluppo</p>
-                    <small>Mostra l'andamento delle spese per fornitore negli ultimi 12 mesi</small>
-                </div>
-            </div>
-        </div>
-        }
-    </div>
-    }
+    </div> 
 
     <!-- Azioni Rapide -->
     <div class="quick-actions">
@@ -257,31 +109,6 @@
                 </svg>
                 <h3>Gestisci Richieste</h3>
                 <p>Visualizza e gestisci le richieste dei clienti</p>
-            </a>
-
-            <a routerLink="/admin/ddt" class="action-card">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                <h3>Nuovo DDT</h3>
-                <p>Crea un nuovo documento di trasporto</p>
-            </a>
-
-            <a routerLink="/admin/fornitori" class="action-card">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-                <h3>Gestisci Fornitori</h3>
-                <p>Visualizza e gestisci i fornitori</p>
             </a>
         </div>
     </div>

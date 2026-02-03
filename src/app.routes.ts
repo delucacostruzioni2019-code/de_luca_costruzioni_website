@@ -17,20 +17,7 @@ export const routes: Routes = [
             { path: '', loadComponent: () => import('./pages/admin/dashboard/dashboard').then(m => m.default), canActivate: [authGuard], },
             { path: 'dashboard', loadComponent: () => import('./pages/admin/dashboard/dashboard').then(m => m.default), canActivate: [authGuard], },
             { path: 'ristrutturazioni', loadComponent: () => import('./pages/admin/ristrutturazioni/ristrutturazioni').then(m => m.default), canActivate: [authGuard] },
-            { path: 'lead', loadComponent: () => import('./pages/admin/lead/lead-list').then(m => m.default), canActivate: [authGuard] },
-            { path: 'fornitori', loadComponent: () => import('./pages/admin/fornitori/fornitori').then(m => m.default), canActivate: [authGuard] },
-            { path: 'fornitori/create', loadComponent: () => import('./pages/admin/fornitori/create/create-fornitore').then(m => m.default), canActivate: [authGuard] },
-            { path: 'fornitori/edit/:id', loadComponent: () => import('./pages/admin/fornitori/edit/edit-fornitore').then(m => m.default), canActivate: [authGuard] },
-            { path: 'materiali', loadComponent: () => import('./pages/admin/materiali/materiali').then(m => m.default), canActivate: [authGuard] },
-            { path: 'materiali/create', loadComponent: () => import('./pages/admin/materiali/create/create-materiale').then(m => m.default), canActivate: [authGuard] },
-            { path: 'materiali/edit/:id', loadComponent: () => import('./pages/admin/materiali/edit/edit-materiale').then(m => m.default), canActivate: [authGuard] },
-            { path: 'cantieri', loadComponent: () => import('./pages/admin/cantieri/cantieri').then(m => m.default), canActivate: [authGuard] },
-            { path: 'cantieri/create', loadComponent: () => import('./pages/admin/cantieri/create/create-cantiere').then(m => m.default), canActivate: [authGuard] },
-            { path: 'cantieri/edit/:id', loadComponent: () => import('./pages/admin/cantieri/edit/edit-cantiere').then(m => m.default), canActivate: [authGuard] },
-            { path: 'ddt', loadComponent: () => import('./pages/admin/ddt/ddt').then(m => m.default), canActivate: [authGuard] },
-            { path: 'ddt/create', loadComponent: () => import('./pages/admin/ddt/create/create-ddt').then(m => m.default), canActivate: [authGuard] },
-            { path: 'ddt/edit/:id', loadComponent: () => import('./pages/admin/ddt/edit/edit-ddt').then(m => m.default), canActivate: [authGuard] },
-        ]
+            { path: 'lead', loadComponent: () => import('./pages/admin/lead/lead-list').then(m => m.default), canActivate: [authGuard] },]
     },
 ]
 
