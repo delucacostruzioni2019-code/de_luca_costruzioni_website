@@ -48,7 +48,10 @@
                         <!-- Header della Card -->
                         <div class="review-header">
                             <div class="reviewer-info">
-                                <div class="avatar">{{ review.initials }}</div>
+                                <div class="avatar">
+                                    <img *ngIf="review.profile_photo_url" [src]="review.profile_photo_url" [alt]="review.author" loading="lazy">
+                                    <span *ngIf="!review.profile_photo_url">{{ review.initials }}</span>
+                                </div>
                                 <div class="reviewer-details">
                                     <h3 class="reviewer-name">{{ review.author }}</h3>
                                     <p class="review-date">{{ review.date }}</p>

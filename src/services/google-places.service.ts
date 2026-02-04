@@ -206,6 +206,7 @@ export class GooglePlacesService {
       rating: googleReview.rating,
       text: googleReview.text,
       avatar: googleReview.profile_photo_url,
+      profile_photo_url: googleReview.profile_photo_url,
       initials: this.getInitials(googleReview.author_name)
     };
   }

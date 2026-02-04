@@ -14,6 +14,7 @@ interface Review {
   text: string;
   avatar?: string;
   initials: string;
+  profile_photo_url?: string;
 }
 
 @Component({
@@ -43,20 +44,26 @@ export class GoogleReviews implements OnInit, OnDestroy {
   }
 
   initSwiper(): void {
+    // Calcola se la paginazione è necessaria in base al numero di recensioni
+    const shouldShowPagination = this.shouldShowPagination();
+    
     this.swiper = new Swiper('.reviews-swiper', {
       modules: [Autoplay, Pagination, Navigation],
-      slidesPerView: 1.2,
+      slidesPerView: 1,
       spaceBetween: 20,
       loop: false,
+      centeredSlides: false,
       autoplay: {
         delay: 5000,
         disableOnInteraction: false,
         pauseOnMouseEnter: true,
       },
-      pagination: {
+      pagination: shouldShowPagination ? {
         el: '.swiper-pagination',
         clickable: true,
-      },
+        dynamicBullets: false,
+        hideOnClick: false,
+      } : false,
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',
@@ -65,21 +72,64 @@ export class GoogleReviews implements OnInit, OnDestroy {
         480: {
           slidesPerView: 1,
           spaceBetween: 16,
+          centeredSlides: false,
         },
         768: {
           slidesPerView: 2,
           spaceBetween: 24,
+          centeredSlides: false,
         },
         1024: {
+          slidesPerView: 2.5,
+          spaceBetween: 30,
+          centeredSlides: true,
+        },
+        1200: {
           slidesPerView: 3,
           spaceBetween: 30,
+          centeredSlides: false,
         },
         1440: {
           slidesPerView: 3,
-          spaceBetween: 30,
+          spaceBetween: 40,
+          centeredSlides: false,
         },
       },
     });
+  }
+
+  /**
+   * Determina se mostrare la paginazione in base al numero di recensioni e dimensione schermo
+   */
+  private shouldShowPagination(): boolean {
+    const reviewsCount = this.reviews.length;
+    
+    // Su mobile mostra sempre se ci sono più di 1 recensioni
+    if (window.innerWidth < 768) {
+      return reviewsCount > 1;
+    }
+    
+    // Su tablet mostra se ci sono più di 2 recensioni
+    if (window.innerWidth < 1200) {
+      return reviewsCount > 2;
+    }
+    
+    // Su desktop mostra se ci sono più di 3 recensioni
+    return reviewsCount > 3;
+  }
+
+  /**
+   * Aggiorna la paginazione di Swiper in base al numero di recensioni
+   */
+  private updateSwiperPagination(): void {
+    if (!this.swiper) return;
+
+    const shouldShow = this.shouldShowPagination();
+    const paginationEl = document.querySelector('.swiper-pagination');
+    
+    if (paginationEl) {
+      paginationEl.classList.toggle('hidden', !shouldShow);
+    }
   }
 
   getStarsArray(rating: number): number[] {
@@ -134,6 +184,7 @@ export class GoogleReviews implements OnInit, OnDestroy {
         // Inizializza Swiper dopo il caricamento dei dati
         setTimeout(() => {
           this.initSwiper();
+          this.updateSwiperPagination();
         }, 100);
 
         // Log informazioni cache
@@ -189,6 +240,7 @@ export class GoogleReviews implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.initSwiper();
+      this.updateSwiperPagination();
     }, 100);
   }
 
