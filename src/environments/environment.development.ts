@@ -5,11 +5,5 @@ export const environment = {
     supabaseServiceRoleKey: '',
     resendApiKey: '',
     
-    // Google Places API Configuration
-    googlePlaces: {
-        apiKey: '', // Sostituire con la tua API key
-        placeId: '',    // Sostituire con il Place ID della tua attività
-        language: 'it',
-        region: 'IT'
-    }
+    // Configurazione rimossa per sicurezza - ora gestita dalla edge function
 };

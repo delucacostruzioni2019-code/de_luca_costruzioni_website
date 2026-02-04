@@ -62,10 +62,10 @@ export class SEOService {
       postalCode: '80013',
       country: 'Italia'
     },
-    phone: '+39 338 924 1314', // TODO: Aggiornare con numero reale
+    phone: '+39 351 159 29 74', // TODO: Aggiornare con numero reale
     email: 'delucacostruzioni2019@gmail.com', // TODO: Aggiornare con email reale
     website: 'https://delucacostruzioni.it', // TODO: Aggiornare con dominio reale
-    logo: '/assets/images/logo_transparent.svg',
+    logo: '/assets/images/dlc_logo.png',
     image: '/assets/images/hero-bg.jpg', // TODO: Aggiornare con immagine principale
     openingHours: [
       'Mo-Fr 08:00-18:00',

@@ -37,6 +37,13 @@ interface CachedReviews {
   expiry: number;
 }
 
+interface EdgeFunctionResponse {
+  success: boolean;
+  data?: GooglePlaceDetails;
+  error?: string;
+  fallback_data?: GooglePlaceDetails;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,15 +52,13 @@ export class GooglePlacesService {
   private readonly CACHE_KEY = 'google_reviews_cache';
   private readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 ore in millisecondi
 
-  private readonly API_KEY = environment.googlePlaces.apiKey;
-  private readonly PLACE_ID = environment.googlePlaces.placeId;
+  private readonly SUPABASE_URL = environment.supabaseUrl;
+  private readonly EDGE_FUNCTION_URL = `${this.SUPABASE_URL}/functions/v1/get-google-reviews`;
 
   /**
    * Ottiene le recensioni di Google Places con cache locale di 24h
    */
-  getPlaceReviews(placeId?: string): Observable<GooglePlaceDetails> {
-    const targetPlaceId = placeId || this.PLACE_ID;
-    
+  getPlaceReviews(): Observable<GooglePlaceDetails> {
     // Controlla prima la cache
     const cachedData = this.getCachedReviews();
     if (cachedData && this.isCacheValid(cachedData)) {
@@ -61,12 +66,12 @@ export class GooglePlacesService {
       return of(cachedData.data);
     }
 
-    // Se la cache è scaduta o non esiste, fai la chiamata API
-    console.log('🌐 Caricamento recensioni da Google Places API');
-    return this.fetchFromGooglePlaces(targetPlaceId).pipe(
+    // Se la cache è scaduta o non esiste, fai la chiamata alla edge function
+    console.log('🌐 Caricamento recensioni da Supabase Edge Function');
+    return this.fetchFromEdgeFunction().pipe(
       tap(data => this.setCachedReviews(data)),
       catchError(error => {
-        console.error('❌ Errore nel caricamento da Google Places:', error);
+        console.error('❌ Errore nel caricamento dalle edge function:', error);
         
         // Se c'è un errore e abbiamo dati in cache (anche scaduti), usali
         if (cachedData) {
@@ -81,25 +86,27 @@ export class GooglePlacesService {
   }
 
   /**
-   * Effettua la chiamata alle Google Places API
+   * Effettua la chiamata alla Supabase Edge Function
    */
-  private fetchFromGooglePlaces(placeId: string): Observable<GooglePlaceDetails> {
-    const url = 'https://maps.googleapis.com/maps/api/place/details/json';
-    const params = {
-      place_id: placeId,
-      fields: 'name,rating,user_ratings_total,reviews,formatted_address,formatted_phone_number,website',
-      key: this.API_KEY,
-      language: environment.googlePlaces.language,
-      region: environment.googlePlaces.region,
-      reviews_sort: 'newest'
+  private fetchFromEdgeFunction(): Observable<GooglePlaceDetails> {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${environment.supabaseAnonKey}`
     };
 
-    return this.http.get<GooglePlacesResponse>(url, { params }).pipe(
+    return this.http.get<EdgeFunctionResponse>(this.EDGE_FUNCTION_URL, { headers }).pipe(
       map(response => {
-        if (response.status === 'OK') {
-          return response.result;
+        if (response.success && response.data) {
+          return response.data;
         }
-        throw new Error(`Google Places API Error: ${response.status}`);
+        
+        // Se la chiamata fallisce ma abbiamo dati di fallback
+        if (response.fallback_data) {
+          console.warn('⚠️ Utilizzo dati di fallback dalla edge function');
+          return response.fallback_data;
+        }
+        
+        throw new Error(`Edge Function Error: ${response.error || 'Unknown error'}`);
       })
     );
   }
@@ -165,9 +172,9 @@ export class GooglePlacesService {
   /**
    * Forza l'aggiornamento della cache
    */
-  refreshReviews(placeId?: string): Observable<GooglePlaceDetails> {
+  refreshReviews(): Observable<GooglePlaceDetails> {
     this.clearCache();
-    return this.getPlaceReviews(placeId);
+    return this.getPlaceReviews();
   }
 
   /**

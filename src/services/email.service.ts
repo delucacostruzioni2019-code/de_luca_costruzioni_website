@@ -232,7 +232,7 @@ export class EmailService {
           
           <div class="contact-info">
             <h3>📞 I nostri contatti:</h3>
-            <p><strong>Telefono:</strong> +39 338 924 1314</p>
+            <p><strong>Telefono:</strong> +39 351 159 29 74</p>
             <p><strong>Email:</strong> delucacostruzioni2019@gmail.com</p>
             <p><strong>Indirizzo:</strong> Via Napoli 141, Casalnuovo, Napoli</p>
             <p><strong>Orari:</strong> Lun-Ven 08:00-18:00, Sab 08:00-13:00</p>
