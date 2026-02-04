@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://delucacostruzioni.com/sitemap.xml
+Sitemap: https://delucacostruzioni.it/sitemap.xml
 
 # Disallow admin areas
 Disallow: /admin/
