@@ -6,37 +6,15 @@
     </div>
 
     <div class="services_list">
-        <div class="services_item">
+        <div class="services_item" *ngFor="let service of services">
             <div class="img-container">
-                <img src="assets/images/lavori/mock.png" alt="Nome Servizio 1">
+                <img [src]="service.image" [alt]="service.alt" loading="lazy">
 
                 <div class="info-overlay">
-                    <h3>NOME SERVIZIO</h3>
+                    <h3>{{ service.name }}</h3>
                 </div>
             </div>
-            <p>Servizi specializzati per completare il tuo progetto con la massima qualità e attenzione ai dettagli.</p>
-        </div>
-
-        <div class="services_item">
-            <div class="img-container">
-                <img src="assets/images/lavori/mock.png" alt="Nome Servizio 1">
-
-                <div class="info-overlay">
-                    <h3>NOME SERVIZIO</h3>
-                </div>
-            </div>
-            <p>Servizi specializzati per completare il tuo progetto con la massima qualità e attenzione ai dettagli.</p>
-        </div>
-
-        <div class="services_item">
-            <div class="img-container">
-                <img src="assets/images/lavori/mock.png" alt="Nome Servizio 1">
-
-                <div class="info-overlay">
-                    <h3>NOME SERVIZIO</h3>
-                </div>
-            </div>
-            <p>Servizi specializzati per completare il tuo progetto con la massima qualità e attenzione ai dettagli.</p>
+            <p>{{ service.description }}</p>
         </div>
     </div>
 
