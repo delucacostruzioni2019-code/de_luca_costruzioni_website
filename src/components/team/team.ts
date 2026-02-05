@@ -36,7 +36,7 @@ export class Team {
     {
       id: 3,
       name: 'Grazia Spagnoli',
-      role: 'Project Manager',
+      role: 'Project Narrator on Social Media',
       image: 'assets/images/team/grazia.png',
       bio: 'Volto principale dell\'azienda sui social e responsabile della comunicazione'
     },

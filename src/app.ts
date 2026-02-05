@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { inject as injectAnalytics } from '@vercel/analytics';
 import { Footer } from "./components/footer/footer";
 import Navbar from './components/navbar/navbar';
 import { SEOService } from './services/seo.service';
@@ -39,6 +40,9 @@ export class App implements OnInit {
   }
 
   ngOnInit() {
+    // Inizializza Vercel Analytics
+    injectAnalytics();
+
     // Inizializza performance optimizations
     this.performanceService.initializePerformanceOptimizations();
 
