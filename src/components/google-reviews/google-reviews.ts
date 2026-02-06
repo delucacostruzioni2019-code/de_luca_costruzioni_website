@@ -44,26 +44,14 @@ export class GoogleReviews implements OnInit, OnDestroy {
   }
 
   initSwiper(): void {
-    // Calcola se la paginazione è necessaria in base al numero di recensioni
-    const shouldShowPagination = this.shouldShowPagination();
-    
     this.swiper = new Swiper('.reviews-swiper', {
       modules: [Autoplay, Pagination, Navigation],
       slidesPerView: 1,
       spaceBetween: 20,
       loop: false,
       centeredSlides: false,
-      autoplay: {
-        delay: 5000,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true,
-      },
-      pagination: shouldShowPagination ? {
-        el: '.swiper-pagination',
-        clickable: true,
-        dynamicBullets: false,
-        hideOnClick: false,
-      } : false,
+      autoplay: false,
+      pagination: false,
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',
@@ -95,6 +83,79 @@ export class GoogleReviews implements OnInit, OnDestroy {
           centeredSlides: false,
         },
       },
+      on: {
+        init: (swiper: any) => {
+          setTimeout(() => {
+            this.createCustomPagination(swiper);
+          }, 100);
+        },
+        slideChange: (swiper: any) => {
+          this.updateActiveBullet(swiper);
+        },
+        resize: (swiper: any) => {
+          setTimeout(() => {
+            this.createCustomPagination(swiper);
+          }, 100);
+        }
+      }
+    });
+  }
+
+  /**
+   * Crea una paginazione completamente personalizzata
+   */
+  private createCustomPagination(swiper: any): void {
+    if (!this.shouldShowPagination()) {
+      const paginationEl = document.querySelector('.swiper-pagination');
+      if (paginationEl) {
+        paginationEl.innerHTML = '';
+      }
+      return;
+    }
+
+    const slidesPerView = Math.floor(this.getSlidesPerView());
+    const requiredPages = Math.ceil(this.reviews.length / slidesPerView);
+    const paginationEl = document.querySelector('.swiper-pagination');
+    
+    if (!paginationEl) return;
+
+    // Pulisce la paginazione esistente
+    paginationEl.innerHTML = '';
+
+    // Crea i bullets necessari
+    for (let i = 0; i < requiredPages; i++) {
+      const bullet = document.createElement('span');
+      bullet.className = 'swiper-pagination-bullet';
+      bullet.setAttribute('data-page', i.toString());
+      
+      // Aggiunge il click listener
+      bullet.addEventListener('click', () => {
+        const targetSlide = i * slidesPerView;
+        swiper.slideTo(targetSlide);
+      });
+
+      paginationEl.appendChild(bullet);
+    }
+
+    // Imposta il bullet attivo iniziale
+    this.updateActiveBullet(swiper);
+  }
+
+  /**
+   * Aggiorna il bullet attivo
+   */
+  private updateActiveBullet(swiper: any): void {
+    const slidesPerView = Math.floor(this.getSlidesPerView());
+    const currentSlide = swiper.activeIndex;
+    const currentPage = Math.floor(currentSlide / slidesPerView);
+    
+    const bullets = document.querySelectorAll('.swiper-pagination-bullet');
+    bullets.forEach((bullet, index) => {
+      if (index === currentPage) {
+        bullet.classList.add('swiper-pagination-bullet-active');
+      } else {
+        bullet.classList.remove('swiper-pagination-bullet-active');
+      }
     });
   }
 
@@ -104,33 +165,46 @@ export class GoogleReviews implements OnInit, OnDestroy {
   private shouldShowPagination(): boolean {
     const reviewsCount = this.reviews.length;
     
+    if (reviewsCount <= 1) {
+      return false;
+    }
+    
     // Su mobile mostra sempre se ci sono più di 1 recensioni
     if (window.innerWidth < 768) {
       return reviewsCount > 1;
     }
     
-    // Su tablet mostra se ci sono più di 2 recensioni
+    // Su tablet mostra se ci sono più di 1 recensioni (vista 1.8)
+    if (window.innerWidth < 1024) {
+      return reviewsCount > 1;
+    }
+    
+    // Su desktop piccolo mostra se ci sono più di 2 recensioni (vista 2.2)
     if (window.innerWidth < 1200) {
       return reviewsCount > 2;
     }
     
-    // Su desktop mostra se ci sono più di 3 recensioni
+    // Su desktop grande mostra se ci sono più di 3 recensioni (vista 3)
     return reviewsCount > 3;
   }
 
   /**
-   * Aggiorna la paginazione di Swiper in base al numero di recensioni
+   * Calcola il numero di slide necessarie in base alla risoluzione e numero di recensioni
    */
-  private updateSwiperPagination(): void {
-    if (!this.swiper) return;
-
-    const shouldShow = this.shouldShowPagination();
-    const paginationEl = document.querySelector('.swiper-pagination');
-    
-    if (paginationEl) {
-      paginationEl.classList.toggle('hidden', !shouldShow);
+  private getSlidesPerView(): number {
+    if (window.innerWidth < 768) {
+      return 1;
     }
+    if (window.innerWidth < 1024) {
+      return 1.8;
+    }
+    if (window.innerWidth < 1200) {
+      return 2.2;
+    }
+    return 3;
   }
+
+
 
   getStarsArray(rating: number): number[] {
     return Array(rating).fill(0);
@@ -184,7 +258,6 @@ export class GoogleReviews implements OnInit, OnDestroy {
         // Inizializza Swiper dopo il caricamento dei dati
         setTimeout(() => {
           this.initSwiper();
-          this.updateSwiperPagination();
         }, 100);
 
         // Log informazioni cache
@@ -240,7 +313,6 @@ export class GoogleReviews implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.initSwiper();
-      this.updateSwiperPagination();
     }, 100);
   }
 
