@@ -135,13 +135,11 @@ export default class LeadList implements OnInit {
     if (!status) return 'Nuovo';
     const labels: Record<LeadStatus, string> = {
       nuovo: 'Nuovo',
-      contattato_qualifica: 'Contattato',
-      sopralluogo_fissato: 'Sopralluogo',
-      preventivo_in_bozza: 'Preventivo',
-      in_negoziazione: 'Negoziazione',
-      chiuso_vinto: 'Vinto',
-      chiuso_perso: 'Perso',
-      non_interessato: 'Non interessato'
+      contattato: 'Contattato',
+      sopralluogo_fissato: 'Sopralluogo fissato',
+      in_trattativa: 'In trattativa',
+      convertito: 'Convertito',
+      perso: 'Perso'
     };
     return labels[status];
   }
@@ -190,6 +188,42 @@ export default class LeadList implements OnInit {
       console.error('Errore aggiornamento stato:', error);
       alert('Errore nell\'aggiornamento');
     }
+  }
+
+  async updateLeadStatus(lead: Lead, newStatus: LeadStatus, event?: Event) {
+    if (event) event.stopPropagation();
+
+    try {
+      const { error } = await this.supabase
+        .from('leads')
+        .update({ lead_status: newStatus })
+        .eq('id', lead.id);
+
+      if (error) throw error;
+
+      await this.loadLeads();
+      
+      // Aggiorna anche il lead selezionato se è aperto
+      if (this.selectedLead && this.selectedLead.id === lead.id) {
+        this.selectedLead.lead_status = newStatus;
+      }
+
+      console.log(`Stato aggiornato a: ${this.getLeadStatusLabel(newStatus)}`);
+    } catch (error) {
+      console.error('Errore aggiornamento stato:', error);
+      alert('Errore nell\'aggiornamento dello stato');
+    }
+  }
+
+  getAvailableStatuses(): { value: LeadStatus; label: string }[] {
+    return [
+      { value: 'nuovo', label: 'Nuovo' },
+      { value: 'contattato', label: 'Contattato' },
+      { value: 'sopralluogo_fissato', label: 'Sopralluogo fissato' },
+      { value: 'in_trattativa', label: 'In trattativa' },
+      { value: 'convertito', label: 'Convertito' },
+      { value: 'perso', label: 'Perso' }
+    ];
   }
 
   async deleteLead(lead: Lead, event?: Event) {

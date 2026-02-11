@@ -2,13 +2,11 @@ export type LeadType = 'contact' | 'supplier' | 'free_estimate';
 
 export type LeadStatus =
   | 'nuovo'
-  | 'contattato_qualifica'
+  | 'contattato'
   | 'sopralluogo_fissato'
-  | 'preventivo_in_bozza'
-  | 'in_negoziazione'
-  | 'chiuso_vinto'
-  | 'chiuso_perso'
-  | 'non_interessato';
+  | 'in_trattativa'
+  | 'convertito'
+  | 'perso';
 
 // Campi comuni a tutti i lead
 export interface BaseLead {

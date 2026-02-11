@@ -49,13 +49,11 @@
                 <select [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event)">
                     <option value="all">Tutti</option>
                     <option value="nuovo">Nuovo</option>
-                    <option value="contattato_qualifica">Contattato</option>
-                    <option value="sopralluogo_fissato">Sopralluogo</option>
-                    <option value="preventivo_in_bozza">Preventivo</option>
-                    <option value="in_negoziazione">Negoziazione</option>
-                    <option value="chiuso_vinto">Vinto</option>
-                    <option value="chiuso_perso">Perso</option>
-                    <option value="non_interessato">Non interessato</option>
+                    <option value="contattato">Contattato</option>
+                    <option value="sopralluogo_fissato">Sopralluogo fissato</option>
+                    <option value="in_trattativa">In trattativa</option>
+                    <option value="convertito">Convertito</option>
+                    <option value="perso">Perso</option>
                 </select>
             </div>
 
@@ -121,8 +119,17 @@
                             [class.free-estimate]="lead.lead_type === 'free_estimate'">
                             {{ getLeadTypeLabel(lead.lead_type) }}
                         </span>
-                        <span *ngIf="!lead.read" class="status-badge new">Nuovo</span>
-                        <span *ngIf="lead.read" class="status-badge read">Letto</span>
+                        <span class="status-badge" 
+                              [class.nuovo]="(lead.lead_status || 'nuovo') === 'nuovo'"
+                              [class.contattato]="lead.lead_status === 'contattato'"
+                              [class.sopralluogo]="lead.lead_status === 'sopralluogo_fissato'"
+                              [class.trattativa]="lead.lead_status === 'in_trattativa'"
+                              [class.convertito]="lead.lead_status === 'convertito'"
+                              [class.perso]="lead.lead_status === 'perso'">
+                            {{ getLeadStatusLabel(lead.lead_status) }}
+                        </span>
+                        <span *ngIf="!lead.read" class="read-badge unread">Non letto</span>
+                        <span *ngIf="lead.read" class="read-badge read">Letto</span>
                     </div>
                 </div>
                 <div class="lead-date">
@@ -307,9 +314,18 @@
                     <p>{{ selectedLead.created_at | date:'dd/MM/yyyy - HH:mm:ss' }}</p>
                 </div>
 
-                <div class="detail-section" *ngIf="selectedLead.lead_status">
+                <div class="detail-section">
                     <label>Stato</label>
-                    <p>{{ getLeadStatusLabel(selectedLead.lead_status) }}</p>
+                    <div class="status-editor">
+                        <select [ngModel]="selectedLead.lead_status || 'nuovo'" 
+                                (ngModelChange)="updateLeadStatus(selectedLead, $event)"
+                                class="status-select">
+                            <option *ngFor="let status of getAvailableStatuses()" [value]="status.value">
+                                {{ status.label }}
+                            </option>
+                        </select>
+                        <span class="current-status">{{ getLeadStatusLabel(selectedLead.lead_status) }}</span>
+                    </div>
                 </div>
 
                 <!-- Contact Lead Specific Fields -->

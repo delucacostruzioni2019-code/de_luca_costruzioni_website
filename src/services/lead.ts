@@ -11,9 +11,15 @@ export class LeadService {
   unreadLeadsCount = signal<number>(0);
 
   async saveContactLead(leadData: LeadInsert): Promise<Lead> {
+    // Assicuriamoci che il lead_status sia impostato a 'nuovo' se non specificato
+    const leadWithStatus = {
+      ...leadData,
+      lead_status: leadData.lead_status || 'nuovo'
+    };
+
     const { data, error } = await this.supabase
       .from('leads')
-      .insert(leadData)
+      .insert(leadWithStatus)
       .select()
       .single();
 

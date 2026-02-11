@@ -200,9 +200,54 @@
   color: white;
 }
 
-.status-badge.read {
-  background: #f1f5f9;
-  color: #64748b;
+// Status badges con colori per ogni stato
+.status-badge {
+  &.nuovo {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  &.contattato {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  &.sopralluogo {
+    background: #e0e7ff;
+    color: #6366f1;
+  }
+
+  &.trattativa {
+    background: #fecaca;
+    color: #dc2626;
+  }
+
+  &.convertito {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  &.perso {
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+}
+
+// Read badges separati dai status badges
+.read-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  
+  &.unread {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  &.read {
+    background: #f1f5f9;
+    color: #64748b;
+  }
 }
 
 .lead-content {
@@ -496,6 +541,57 @@
 
   .detail-section.full {
     grid-column: 1;
+  }
+}
+
+// Status Editor
+.status-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.status-select {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  &:hover {
+    border-color: #cbd5e1;
+  }
+}
+
+.current-status {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+// Miglior spacing per detail section
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+  }
+
+  p {
+    margin: 0;
+    color: #6b7280;
   }
 }
 
