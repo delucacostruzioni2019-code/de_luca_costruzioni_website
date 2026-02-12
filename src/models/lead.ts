@@ -52,4 +52,4 @@ export interface FreeEstimateLead extends BaseLead {
 export type Lead = ContactLead | SupplierLead | FreeEstimateLead;
 
 // Type per l'inserimento (senza campi generati dal DB)
-export type LeadInsert = Omit<Lead, 'id' | 'created_at' | 'lead_status' | 'read'>;
+export type LeadInsert = Omit<Lead, 'id' | 'created_at'| 'read'>;
