@@ -32,7 +32,7 @@ export class EmailService {
   private readonly FROM_EMAIL = 'noreply@delucacostruzioni.it';
   //private readonly ADMIN_EMAIL = 'delucacostruzioni2019@gmail.com';
   //todo remove after testing
-  private readonly ADMIN_EMAIL = 'gennytorelli98@gmail.com';
+  private readonly ADMIN_EMAIL = 'delucacostruzioni2019@gmail.com';
 
   /**
    * Invia email di conferma all'utente e notifica all'admin
