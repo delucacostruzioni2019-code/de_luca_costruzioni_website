@@ -5,11 +5,7 @@
   display: flex;
   align-items: center; /* Centra il contenuto verticalmente */
   justify-content: center; /* Centra il contenuto orizzontalmente */
-
-  /* Immagine di Sfondo */
-  background-image: url('/assets/images/hero_banner_mock_image.png'); /* Adatta il percorso! */
-  background-size: cover;
-  background-position: center;
+  overflow: hidden;
 
   color: white; /* Colore del testo */
   text-align: center;
@@ -26,6 +22,18 @@
       height: 445px;
     }
   } 
+}
+
+/* --- Background Image --- */
+.hero_banner_image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
 }
 
 /* --- Overlay (Gradiente Scuro) --- */

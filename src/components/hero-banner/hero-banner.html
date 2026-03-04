@@ -1,4 +1,6 @@
-<section class="hero_banner" [class]="bannerMode()" [style.background-image]="'url(' + imageUrl() + ')'">
+<section class="hero_banner" [class]="bannerMode()">
+    <img class="hero_banner_image" [src]="imageUrl()" [alt]="title()" loading="eager" />
+    
     <div class="hero_content">
         <h1>{{title() | titlecase}}</h1>
         <div class="breadcrumb">
