@@ -577,6 +577,75 @@
   font-style: italic;
 }
 
+// Inspection Date Editor
+.inspection-date-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.date-input {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  &:hover {
+    border-color: #cbd5e1;
+  }
+}
+
+.date-display {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #059669;
+  font-weight: 500;
+}
+
+// Admin Notes Editor
+.admin-notes-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.notes-textarea {
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-family: 'Outfit', sans-serif;
+  background: white;
+  min-height: 120px;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  &:hover {
+    border-color: #cbd5e1;
+  }
+}
+
+.edit-hint {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-style: italic;
+}
+
 // Miglior spacing per detail section
 .detail-section {
   display: flex;

@@ -28,8 +28,7 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <path d="m21 21-4.35-4.35"></path>
             </svg>
-            <input type="text" placeholder="Cerca per nome, email, telefono..."
-                [ngModel]="searchTerm()"
+            <input type="text" placeholder="Cerca per nome, email, telefono..." [ngModel]="searchTerm()"
                 (ngModelChange)="searchTerm.set($event)" />
         </div>
 
@@ -102,7 +101,8 @@
     </div>
 
     <div *ngIf="!loading() && paginatedLeads().length > 0" class="leads-list">
-        <div *ngFor="let lead of paginatedLeads()" class="lead-card" [class.unread]="!lead.read" (click)="viewLead(lead)">
+        <div *ngFor="let lead of paginatedLeads()" class="lead-card" [class.unread]="!lead.read"
+            (click)="viewLead(lead)">
             <div class="lead-header">
                 <div class="lead-info">
                     <div class="lead-name">
@@ -119,13 +119,12 @@
                             [class.free-estimate]="lead.lead_type === 'free_estimate'">
                             {{ getLeadTypeLabel(lead.lead_type) }}
                         </span>
-                        <span class="status-badge" 
-                              [class.nuovo]="(lead.lead_status || 'nuovo') === 'nuovo'"
-                              [class.contattato]="lead.lead_status === 'contattato'"
-                              [class.sopralluogo]="lead.lead_status === 'sopralluogo_fissato'"
-                              [class.trattativa]="lead.lead_status === 'in_trattativa'"
-                              [class.convertito]="lead.lead_status === 'convertito'"
-                              [class.perso]="lead.lead_status === 'perso'">
+                        <span class="status-badge" [class.nuovo]="(lead.lead_status || 'nuovo') === 'nuovo'"
+                            [class.contattato]="lead.lead_status === 'contattato'"
+                            [class.sopralluogo]="lead.lead_status === 'sopralluogo_fissato'"
+                            [class.trattativa]="lead.lead_status === 'in_trattativa'"
+                            [class.convertito]="lead.lead_status === 'convertito'"
+                            [class.perso]="lead.lead_status === 'perso'">
                             {{ getLeadStatusLabel(lead.lead_status) }}
                         </span>
                         <span *ngIf="!lead.read" class="read-badge unread">Non letto</span>
@@ -246,12 +245,8 @@
     </div>
 
     <!-- Paginator -->
-    <app-paginator
-        *ngIf="!loading() && filteredLeads().length > itemsPerPage"
-        [totalItems]="filteredLeads().length"
-        [itemsPerPage]="itemsPerPage"
-        [currentPage]="currentPage()"
-        (pageChange)="onPageChange($event)">
+    <app-paginator *ngIf="!loading() && filteredLeads().length > itemsPerPage" [totalItems]="filteredLeads().length"
+        [itemsPerPage]="itemsPerPage" [currentPage]="currentPage()" (pageChange)="onPageChange($event)">
     </app-paginator>
 
     <!-- Modal Dettaglio -->
@@ -317,14 +312,24 @@
                 <div class="detail-section">
                     <label>Stato</label>
                     <div class="status-editor">
-                        <select [ngModel]="selectedLead.lead_status || 'nuovo'" 
-                                (ngModelChange)="updateLeadStatus(selectedLead, $event)"
-                                class="status-select">
+                        <select [ngModel]="selectedLead.lead_status || 'nuovo'"
+                            (ngModelChange)="updateLeadStatus(selectedLead, $event)" class="status-select">
                             <option *ngFor="let status of getAvailableStatuses()" [value]="status.value">
                                 {{ status.label }}
                             </option>
                         </select>
                         <span class="current-status">{{ getLeadStatusLabel(selectedLead.lead_status) }}</span>
+                    </div>
+                </div>
+
+                <!-- Date of appointment - visible only when status is sopralluogo_fissato -->
+                <div class="detail-section" *ngIf="selectedLead.lead_status === 'sopralluogo_fissato'">
+                    <label>Data Sopralluogo</label>
+                    <div class="inspection-date-editor">
+                        <input type="datetime-local"
+                            [value]="(selectedLead.inspection_date ? formatDateForInput(selectedLead.inspection_date) : '')"
+                            (change)="updateInspectionDate(selectedLead, $event)" class="date-input"
+                            placeholder="Seleziona data e ora">
                     </div>
                 </div>
 
@@ -379,6 +384,16 @@
                         </div>
                     </div>
                 </ng-container>
+
+                <!-- Admin Notes -->
+                <div class="detail-section full">
+                    <label>Note Amministratore</label>
+                    <div class="admin-notes-editor">
+                        <textarea [(ngModel)]="selectedLead.admin_notes" (blur)="updateAdminNotes(selectedLead)"
+                            placeholder="Aggiungi note interne..." class="notes-textarea"></textarea>
+                        <span class="edit-hint">💡 Le modifiche vengono salvate automaticamente</span>
+                    </div>
+                </div>
             </div>
 
             <div class="modal-footer">

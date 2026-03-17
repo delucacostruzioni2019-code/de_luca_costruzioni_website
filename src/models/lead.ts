@@ -20,6 +20,8 @@ export interface BaseLead {
   privacy_accepted: boolean;
   lead_type: LeadType;
   lead_status?: LeadStatus;
+  inspection_date?: string;
+  admin_notes?: string;
   read?: boolean;
   created_at?: string;
 }
@@ -52,4 +54,4 @@ export interface FreeEstimateLead extends BaseLead {
 export type Lead = ContactLead | SupplierLead | FreeEstimateLead;
 
 // Type per l'inserimento (senza campi generati dal DB)
-export type LeadInsert = Omit<Lead, 'id' | 'created_at'| 'read'>;
+export type LeadInsert = Omit<Lead, 'id' | 'created_at' | 'read'>;

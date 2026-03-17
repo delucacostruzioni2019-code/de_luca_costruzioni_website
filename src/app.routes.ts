@@ -17,7 +17,8 @@ export const routes: Routes = [
             { path: '', loadComponent: () => import('./pages/admin/dashboard/dashboard').then(m => m.default), canActivate: [authGuard], },
             { path: 'dashboard', loadComponent: () => import('./pages/admin/dashboard/dashboard').then(m => m.default), canActivate: [authGuard], },
             { path: 'ristrutturazioni', loadComponent: () => import('./pages/admin/ristrutturazioni/ristrutturazioni').then(m => m.default), canActivate: [authGuard] },
-            { path: 'lead', loadComponent: () => import('./pages/admin/lead/lead-list').then(m => m.default), canActivate: [authGuard] },]
+            { path: 'lead', loadComponent: () => import('./pages/admin/lead/lead-list').then(m => m.default), canActivate: [authGuard] },
+            { path: 'inspections-calendar', loadComponent: () => import('./pages/admin/inspections-calendar/inspections-calendar').then(m => m.default), canActivate: [authGuard] },]
     },
 ]
 

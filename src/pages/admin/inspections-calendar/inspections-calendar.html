@@ -1,0 +1,175 @@
+<div class="calendar-container">
+    <div class="calendar-header">
+        <div>
+            <h1>Calendario Sopralluoghi</h1>
+            <p class="subtitle">Visualizza tutti gli appuntamenti fissati</p>
+        </div>
+        <button class="btn-back" (click)="goBackToLeads()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Torna ai Lead
+        </button>
+    </div>
+
+    <div *ngIf="loading()" class="loading-state">
+        <div class="spinner"></div>
+        <p>Caricamento appuntamenti...</p>
+    </div>
+
+    <div *ngIf="!loading()" class="calendar-wrapper">
+        <div class="calendar-nav">
+            <button class="nav-btn" (click)="previousMonth()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2 class="month-year">{{ monthYear() }}</h2>
+            <button class="nav-btn" (click)="nextMonth()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+            <button class="today-btn" (click)="today()">Oggi</button>
+        </div>
+
+        <div class="calendar">
+            <div class="weekdays">
+                <div class="weekday">Lun</div>
+                <div class="weekday">Mar</div>
+                <div class="weekday">Mer</div>
+                <div class="weekday">Gio</div>
+                <div class="weekday">Ven</div>
+                <div class="weekday">Sab</div>
+                <div class="weekday">Dom</div>
+            </div>
+
+            <div class="calendar-grid">
+                <ng-container *ngFor="let week of calendarDays()">
+                    <ng-container *ngFor="let day of week.days">
+                        <div class="calendar-day" [class.other-month]="!day.isCurrentMonth" [class.today]="day.isToday"
+                            [class.has-inspections]="day.inspections.length > 0">
+                            <div class="day-number">{{ day.dayNumber }}</div>
+                            <div class="inspections-list" *ngIf="day.isCurrentMonth && day.inspections.length > 0">
+                                <button *ngFor="let inspection of day.inspections" class="inspection-item"
+                                    [class.contact]="inspection.lead_type === 'contact'"
+                                    [class.supplier]="inspection.lead_type === 'supplier'"
+                                    [class.free-estimate]="inspection.lead_type === 'free_estimate'"
+                                    (click)="openInspectionDetails(inspection)"
+                                    [title]="inspection.name + ' ' + inspection.surname">
+                                    {{ inspection.name }} {{ inspection.surname | slice:0:1 }}
+                                </button>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!loading() && inspections().length === 0" class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <h2>Nessun sopralluogo fissato</h2>
+        <p>Quando inserirai una data di sopralluogo, apparirà qui nel calendario</p>
+    </div>
+
+    <!-- Modal Dettaglio Appuntamento -->
+    <div *ngIf="selectedInspection" class="modal-overlay" (click)="closeModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title-wrapper">
+                    <h2>Dettaglio Sopralluogo</h2>
+                    <span class="type-badge" [class.contact]="selectedInspection.lead_type === 'contact'"
+                        [class.supplier]="selectedInspection.lead_type === 'supplier'"
+                        [class.free-estimate]="selectedInspection.lead_type === 'free_estimate'">
+                        {{ getLeadTypeLabel(selectedInspection.lead_type) }}
+                    </span>
+                </div>
+                <button class="btn-close" (click)="closeModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="detail-section">
+                    <label>Nome Completo</label>
+                    <p>{{ selectedInspection.name || '-' }} {{ selectedInspection.surname || '' }}</p>
+                </div>
+
+                <div class="detail-section">
+                    <label>Email</label>
+                    <p>
+                        <a [href]="'mailto:' + (selectedInspection.email || '')">
+                            {{ selectedInspection.email || '-' }}
+                        </a>
+                    </p>
+                </div>
+
+                <div class="detail-section" *ngIf="selectedInspection.mobile">
+                    <label>Telefono</label>
+                    <p>
+                        <a [href]="'tel:' + (selectedInspection.mobile || '')">
+                            {{ selectedInspection.mobile }}
+                        </a>
+                    </p>
+                </div>
+
+                <div class="detail-section" *ngIf="selectedInspection.address">
+                    <label>Indirizzo</label>
+                    <p>{{ selectedInspection.address }}</p>
+                </div>
+
+                <div class="detail-section" *ngIf="selectedInspection.service_type">
+                    <label>Tipo di Servizio</label>
+                    <p>{{ selectedInspection.service_type }}</p>
+                </div>
+
+                <div class="detail-section">
+                    <label>Data e Ora del Sopralluogo</label>
+                    <p class="inspection-date-highlight">
+                        {{ selectedInspection.inspection_date | date: 'dd/MM/yyyy - HH:mm' }}
+                    </p>
+                </div>
+
+                <div class="detail-section" *ngIf="selectedInspection.lead_type === 'contact'">
+                    <label>Messaggio</label>
+                    <div class="message-box">
+                        {{ $any(selectedInspection).message || '-' }}
+                    </div>
+                </div>
+
+                <div class="detail-section"
+                    *ngIf="selectedInspection.lead_type === 'free_estimate' && $any(selectedInspection).budget">
+                    <label>Budget</label>
+                    <p>{{ $any(selectedInspection).budget }}</p>
+                </div>
+
+                <div class="detail-section"
+                    *ngIf="selectedInspection.lead_type === 'free_estimate' && $any(selectedInspection).square_meters">
+                    <label>Metratura</label>
+                    <p>{{ $any(selectedInspection).square_meters }} m²</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal secondary" (click)="closeModal()">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>

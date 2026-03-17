@@ -249,4 +249,99 @@ export default class LeadList implements OnInit {
       alert('Errore nell\'eliminazione');
     }
   }
+
+  /**
+   * Converte una data ISO string al formato datetime-local per l'input HTML
+   * Converte da UTC a ora locale del browser
+   */
+  formatDateForInput(dateString: string | null | undefined): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    // getHours/getMinutes ritornano le ore/minuti nel timezone locale del browser
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  /**
+   * Converte da datetime-local (locale del browser) a UTC ISO string per Supabase
+   * Risolve il problema di timezone: mantiene l'orario selezionato convertendolo correttamente a UTC
+   */
+  private localDateTimeToUTC(dateTimeLocalValue: string): string {
+    // dateTimeLocalValue = "2026-03-17T12:30" (orario locale selezionato dall'utente)
+    const [datePart, timePart] = dateTimeLocalValue.split('T');
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hours, minutes] = timePart.split(':').map(Number);
+
+    // Crea una data usando i constructor con componenti locali
+    // new Date(year, month-1, day, hours, minutes) interpreta questi valori come locali
+    // e li converte internamente a UTC
+    const localDate = new Date(year, month - 1, day, hours, minutes, 0);
+
+    // toISOString() ritorna il valore UTC corretto
+    // Es: se l'utente è in Italia (+01:00) e seleziona 12:30:
+    // -> new Date(2026, 2, 17, 12, 30, 0) crea 12:30 locale = 11:30 UTC
+    // -> toISOString() ritorna "2026-03-17T11:30:00Z"
+    return localDate.toISOString();
+  }
+
+  /**
+   * Aggiorna la data di sopralluogo del lead
+   */
+  async updateInspectionDate(lead: Lead, event: Event) {
+    const input = event.target as HTMLInputElement;
+    const newDate = input.value;
+
+    if (!newDate || !lead.id) {
+      alert('Data non valida');
+      return;
+    }
+
+    try {
+      // Converti da datetime-local a UTC ISO string
+      const isoDateUTC = this.localDateTimeToUTC(newDate);
+
+      const { error } = await this.supabase
+        .from('leads')
+        .update({ inspection_date: isoDateUTC })
+        .eq('id', lead.id);
+
+      if (error) throw error;
+
+      // Aggiorna il lead selezionato
+      if (this.selectedLead && this.selectedLead.id === lead.id) {
+        this.selectedLead.inspection_date = isoDateUTC;
+      }
+
+      await this.loadLeads();
+      console.log('Data di sopralluogo aggiornata con successo');
+    } catch (error) {
+      console.error('Errore aggiornamento data:', error);
+      alert('Errore nell\'aggiornamento della data');
+    }
+  }
+
+  /**
+   * Aggiorna le note amministratore del lead
+   */
+  async updateAdminNotes(lead: Lead) {
+    if (!lead.id) return;
+
+    try {
+      const { error } = await this.supabase
+        .from('leads')
+        .update({ admin_notes: lead.admin_notes || null })
+        .eq('id', lead.id);
+
+      if (error) throw error;
+
+      console.log('Note amministratore salvate con successo');
+    } catch (error) {
+      console.error('Errore aggiornamento note:', error);
+      alert('Errore nel salvataggio delle note');
+    }
+  }
 }
