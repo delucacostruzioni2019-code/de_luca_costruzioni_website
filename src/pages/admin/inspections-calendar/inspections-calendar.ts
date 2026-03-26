@@ -73,44 +73,58 @@ export default class InspectionsCalendar implements OnInit {
   private buildCalendar() {
     const year = this.currentDate().getFullYear();
     const month = this.currentDate().getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+    // 1. Trova il primo giorno del mese
+    const firstDayOfMonth = new Date(year, month, 1);
+    // 2. Trova l'ultimo giorno del mese
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+
+    // 3. Calcola l'inizio del calendario (sempre Lunedì)
+    // getDay(): 0=Dom, 1=Lun... 6=Sab
+    const dayOfWeek = firstDayOfMonth.getDay();
+    const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+    const startDate = new Date(firstDayOfMonth);
+    startDate.setDate(firstDayOfMonth.getDate() - diffToMonday);
+
+    // 4. Calcola la fine del calendario (sempre Domenica)
+    const endDayOfWeek = lastDayOfMonth.getDay();
+    const diffToSunday = endDayOfWeek === 0 ? 0 : 7 - endDayOfWeek;
+
+    const endDate = new Date(lastDayOfMonth);
+    endDate.setDate(lastDayOfMonth.getDate() + diffToSunday);
 
     const weeks: CalendarWeek[] = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    let currentDate = new Date(startDate);
-    while (currentDate <= lastDay || currentDate.getDay() !== 0) {
+    let tempDate = new Date(startDate);
+
+    // Ciclo sicuro: camminiamo da startDate a endDate
+    while (tempDate <= endDate) {
       const week: CalendarWeek = { days: [] };
 
       for (let i = 0; i < 7; i++) {
-        const dayDate = new Date(currentDate);
-        const dayNumber = dayDate.getDate();
-        const isCurrentMonth = dayDate.getMonth() === month;
-        const isTodayCheck = dayDate.getTime() === today.getTime();
+        const dayDate = new Date(tempDate);
 
-        // Trova i sopralluoghi per questo giorno
         const dailyInspections = this.inspections().filter(inspection => {
           if (!inspection.inspection_date) return false;
-          const inspectionDate = new Date(inspection.inspection_date);
-          inspectionDate.setHours(0, 0, 0, 0);
-          return inspectionDate.getTime() === dayDate.getTime();
+          const d = new Date(inspection.inspection_date);
+          return d.getFullYear() === dayDate.getFullYear() &&
+            d.getMonth() === dayDate.getMonth() &&
+            d.getDate() === dayDate.getDate();
         });
 
         week.days.push({
-          date: new Date(dayDate),
-          dayNumber,
-          isCurrentMonth,
-          isToday: isTodayCheck,
+          date: dayDate,
+          dayNumber: dayDate.getDate(),
+          isCurrentMonth: dayDate.getMonth() === month,
+          isToday: dayDate.setHours(0, 0, 0, 0) === today.getTime(),
           inspections: dailyInspections
         });
 
-        currentDate.setDate(currentDate.getDate() + 1);
+        tempDate.setDate(tempDate.getDate() + 1);
       }
-
       weeks.push(week);
     }
 
